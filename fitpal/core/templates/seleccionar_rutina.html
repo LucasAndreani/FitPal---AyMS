@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <h2 class="mb-3">Elegir una rutina</h2>
+
+  <div class="list-group">
+    {% for r in rutinas %}
+      <a href="{% url 'crear_plan' r.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <strong>{{ r.nombre }}</strong>
+          <span class="badge bg-secondary text-capitalize">{{ r.get_nivel_display }}</span>
+        </div>
+        <small class="text-muted">
+          {% for label in r.dia_labels %}
+            {% if not forloop.first %} • {% endif %}
+            {{ label }}
+          {% endfor %}
+        </small>
+      </a>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

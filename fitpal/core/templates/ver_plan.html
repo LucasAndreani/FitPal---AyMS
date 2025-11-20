@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <h2 class="mb-3">{{ plan }}</h2>
+
+    <p class="text-muted">
+        Objetivo: {% if plan.objetivo %}{{ plan.objetivo.nombre }}{% else %}Sin objetivo{% endif %} • 
+        Nivel: {{ plan.get_nivel_experiencia_display }} •
+        Creado el {{ plan.fecha_creacion|date:"Y-m-d" }}
+    </p>
+
+
+    <hr>
+
+    {% for bloque in dias %}
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                <h4 class="text-capitalize mb-0">{{ bloque.label }}</h4>
+                {% if bloque.ultimo_log %}
+                    <small class="text-muted">Último registro: {{ bloque.ultimo_log.fecha|date:"Y-m-d" }}</small>
+                {% else %}
+                    <small class="text-muted">Sin registros aún</small>
+                {% endif %}
+            </div>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'registrar_progreso' plan.id bloque.dia %}">
+                Registrar progreso
+            </a>
+        </div>
+        <ul class="list-group mb-3">
+            {% for pe in bloque.items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ pe.ejercicio.nombre }}</strong>
+                        <br>
+                        <small class="text-muted">{{ pe.ejercicio.musculo }}</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">
+                        {{ pe.series }}×{{ pe.repeticiones }}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+    <form method="post" action="{% url 'seleccionar_plan' plan.id %}">
+    {% csrf_token %}
+    <button class="btn btn-success mb-3">
+        Seleccionar este plan
+    </button>
+</form>
+
+</div>
+
+{% endblock %}

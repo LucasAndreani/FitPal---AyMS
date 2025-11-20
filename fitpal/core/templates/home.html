@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+  <h1 class="mb-3">Hola, {{ request.user.username }}</h1>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Tu perfil</h5>
+          <p>
+            Edad: {{ perfil.edad|default:"—" }} •
+            Peso: {{ perfil.peso|default:"—" }} kg •
+            Altura: {{ perfil.altura|default:"—" }} m
+          </p>
+            <p>Objetivo:
+            {% if perfil.objetivo %}
+                {{ perfil.objetivo.nombre }}
+            {% else %}
+                No seleccionado
+            {% endif %}
+            </p>          
+            <p>Nivel: {{ perfil.get_nivel_experiencia_display }}</p>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'select_objetivo' %}">Editar objetivo / nivel</a>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Tu rutina activa</h5>
+          {% if plan_activo %}
+            <p class="mb-1">
+              <strong>{{ plan_activo.nombre }}</strong>
+              <br>
+              <small class="text-muted">
+                Nivel: {{ plan_activo.get_nivel_experiencia_display }} • Creada el {{ plan_activo.fecha_creacion|date:"Y-m-d" }}
+              </small>
+            </p>
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'ver_plan' plan_activo.id %}">
+                Ver rutina
+              </a>
+              <a class="btn btn-sm btn-secondary" href="{% url 'seleccionar_rutina' %}">
+                Cambiar rutina
+              </a>
+            </div>
+          {% else %}
+            <p class="text-muted mb-2">No tenés ninguna rutina actual.</p>
+            <a class="btn btn-primary btn-sm" href="{% url 'seleccionar_rutina' %}">
+              Elegir rutina
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Progreso reciente</h5>
+          {% if progreso_reciente %}
+            <ul class="list-group">
+              {% for pr in progreso_reciente %}
+                <li class="list-group-item">
+                  {% if pr.day_log %}
+                    <strong>{{ pr.day_log.titulo|default:pr.day_log.get_dia_display }}</strong> ·
+                  {% endif %}
+                  {{ pr.ejercicio.nombre }}
+                  {% if pr.peso_usado %} — {{ pr.peso_usado }} kg{% endif %}
+                  {% if pr.repeticiones %} x {{ pr.repeticiones }}{% endif %}
+                  {% if pr.day_log %}
+                    <small class="text-muted">({{ pr.day_log.fecha|date:"Y-m-d" }})</small>
+                  {% else %}
+                    <small class="text-muted">({{ pr.fecha|date:"Y-m-d H:i" }})</small>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">Aún no registraste progreso.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6>Ejercicios destacados</h6>
+          <ul class="list-group list-group-flush">
+            {% for e in ejercicios %}
+              <li class="list-group-item">{{ e.nombre }} <small class="text-muted">({{ e.musculo }})</small></li>
+            {% empty %}
+              <li class="list-group-item text-muted">No hay ejercicios</li>
+            {% endfor %}
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
