@@ -30,3 +30,7 @@ node_modules/
 .env.*
 .python-version
 
+TESTING.md
+DOCUMENTACION_SEGUNDO_PARCIAL.md
+test_clone/
+*test_clone*/
